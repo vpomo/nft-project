@@ -1,0 +1,6 @@
+# Ignore database data directories
+postgres-data/
+redis-data/
+
+# Keep ipfs-data as it may contain important configuration
+# ipfs-data/
