@@ -1,0 +1,25 @@
+{
+  "name": "SGAA NFT #1 - Animated",
+  "description": "Sale Google Ads Accounts NFT with animated preview",
+  "image": "ipfs://QmYourImageCID/preview-1.png",
+  "animation_url": "ipfs://QmYourVideoCID/animation-1.mp4",
+  "external_url": "https://your-website.com/nft/1",
+  "background_color": "000000",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Animated"
+    },
+    {
+      "trait_type": "Account Type",
+      "value": "Premium"
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Duration (seconds)",
+      "value": 10
+    }
+  ]
+}
+
+

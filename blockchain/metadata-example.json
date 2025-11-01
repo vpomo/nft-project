@@ -1,0 +1,36 @@
+{
+  "name": "SGAA NFT #1",
+  "description": "Sale Google Ads Accounts NFT Token - Premium verified account with full access and warranty",
+  "image": "https://your-domain.com/images/nft-1.png",
+  "external_url": "https://your-website.com/nft/1",
+  "background_color": "FFFFFF",
+  "attributes": [
+    {
+      "trait_type": "Account Type",
+      "value": "Premium"
+    },
+    {
+      "trait_type": "Status",
+      "value": "Active"
+    },
+    {
+      "trait_type": "Region",
+      "value": "Global"
+    },
+    {
+      "display_type": "number",
+      "trait_type": "Credits",
+      "value": 1000
+    },
+    {
+      "display_type": "date",
+      "trait_type": "Created Date",
+      "value": 1704067200
+    },
+    {
+      "trait_type": "Verification",
+      "value": "Verified"
+    }
+  ]
+}
+
