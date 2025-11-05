@@ -46,3 +46,8 @@ type NftDataRepository interface {
 	ReadAllNftData(ctx context.Context, limit int) ([]models.NftDataModel, error)
 	TokenIdExists(ctx context.Context, tokenId int64) (bool, error)
 }
+
+type NftImageRepository interface {
+	Create(ctx context.Context, image *models.NftImage) error
+	GetByTokenID(ctx context.Context, tokenID int64) (*models.NftImage, error)
+}

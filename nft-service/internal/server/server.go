@@ -119,6 +119,7 @@ func addRoutesV1(v1Router fiber.Router, authHandlers *handlers.AuthHandlers, kub
 	api := v1Router.Group("/api")
 	api.Get("/pins", handlers.ListPinsHandler)
 	api.Get("/nft/:id", httputils.FiberJSONWrapper(nftHandlers.ReadNft))
+	api.Get("/nft/image/:id", nftHandlers.ReadNftImage)
 	api.Get("/nft/all/:limit", httputils.FiberJSONWrapper(nftHandlers.ReadAllNft))
 
 	apiProtected := v1Router.Group("", authMiddleware)

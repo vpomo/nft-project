@@ -69,6 +69,7 @@ func main() {
 	tokenRepository := postgresql.NewUserTokenRepository(db, cfg.App.Debug)
 	roleRepository := postgresql.NewRoleRepository(db)
 	nftDataRepository := postgresql.NewNftDataRepository(db)
+	nftImageRepository := postgresql.NewNftImageRepository(db)
 	jwt := jwtManager.NewJWTManager(&cfg.JWT)
 
 	logger.Info("Create server")
@@ -77,7 +78,7 @@ func main() {
 	logger.Info("Creating internal handlers")
 	authHandlers := handlers.NewAuthHandlers(logger, jwt, userRepository, tokenRepository, roleRepository, cacheClient, cfg.Secret)
 	kuboHandlers := handlers.NewKuboHandlers(logger)
-	nftDataHandlers := handlers.NewNftHandlers(logger, nftDataRepository)
+	nftDataHandlers := handlers.NewNftHandlers(logger, nftDataRepository, nftImageRepository)
 
 	// добавляем роуты для экземпляра сервера
 	server.AddRoutes(app, authHandlers, kuboHandlers, nftDataHandlers, logger)

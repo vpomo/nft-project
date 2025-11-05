@@ -50,7 +50,7 @@
           <v-list-item>
             <v-list-item-title>IPFS Gateway Link</v-list-item-title>
             <v-list-item-subtitle>
-              <a :href="nft.image" target="_blank">{{ nft.image }}</a>
+              <a :href="nft.ipfs_image_link" target="_blank">{{ nft.ipfs_image_link }}</a>
             </v-list-item-subtitle>
           </v-list-item>
         </v-list>

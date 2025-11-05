@@ -13,18 +13,21 @@ import (
 	"main/tools/pkg/logger"
 	tvoerrors "main/tools/pkg/tvo_errors"
 	"strconv"
+	"main/internal/models"
 )
 
 // NftHandlers
 type NftHandlers struct {
-	logger            *logger.Logger
-	nftDataRepository repository.NftDataRepository
+	logger             *logger.Logger
+	nftDataRepository  repository.NftDataRepository
+	nftImageRepository repository.NftImageRepository
 }
 
-func NewNftHandlers(logger *logger.Logger, nftRepository repository.NftDataRepository) *NftHandlers {
+func NewNftHandlers(logger *logger.Logger, nftRepository repository.NftDataRepository, nftImageRepository repository.NftImageRepository) *NftHandlers {
 	return &NftHandlers{
-		logger:            logger,
-		nftDataRepository: nftRepository,
+		logger:             logger,
+		nftDataRepository:  nftRepository,
+		nftImageRepository: nftImageRepository,
 	}
 }
 
@@ -57,6 +60,21 @@ func (h *NftHandlers) CreateNftData(c *fiber.Ctx) (interface{}, error) {
 		log.Error("Error reading image file", "error", err)
 		// Возвращаем более конкретную ошибку, чтобы было понятно, что файл не найден
 		return nil, status.Error(codes.InvalidArgument, "file is missing or key is not 'file'")
+	}
+
+	// Read file content
+	fileContent, err := file.Open()
+	if err != nil {
+		log.Error("Error opening image file", "error", err)
+		return nil, status.Error(codes.Internal, "something went wrong") //nolint
+	}
+	defer fileContent.Close()
+
+	buffer := make([]byte, file.Size)
+	_, err = fileContent.Read(buffer)
+	if err != nil {
+		log.Error("Error reading file content", "error", err)
+		return nil, status.Error(codes.Internal, "something went wrong") //nolint
 	}
 
 	ctx := httputils.CtxWithAuthToken(c)
@@ -99,6 +117,18 @@ func (h *NftHandlers) CreateNftData(c *fiber.Ctx) (interface{}, error) {
 		return nil, status.Error(codes.Internal, "something went wrong") //nolint
 	}
 
+	// Save image to database
+	nftImage := &models.NftImage{
+		NftTokenID:  tokenId,
+		ImageData:   buffer,
+		ContentType: file.Header.Get("Content-Type"),
+	}
+	err = h.nftImageRepository.Create(ctx, nftImage)
+	if err != nil {
+		log.Error("Error creating nft image", "error", err)
+		return nil, status.Error(codes.Internal, "something went wrong") //nolint
+	}
+
 	return &dto.CreateNftDataResponse{
 		Message: "NFT data created successful",
 	}, nil
@@ -136,12 +166,13 @@ func (h *NftHandlers) ReadNft(c *fiber.Ctx) (interface{}, error) {
 	}
 	
 	return &dto.ReadNftResponse{
-		TokenId:     nft.TokenId,
-		Name:        fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
-		Description: description,
-		CidV0:       nft.CidV0,
-		CidV1:       nft.CidV1,
-		Image:       fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
+		TokenId:       nft.TokenId,
+		Name:          fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
+		Description:   description,
+		CidV0:         nft.CidV0,
+		CidV1:         nft.CidV1,
+		Image:         fmt.Sprintf("/v1/api/nft/image/%d", nft.TokenId),
+		IpfsImageLink: fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
 	}, nil
 }
 
@@ -176,12 +207,13 @@ func (h *NftHandlers) ReadAllNft(c *fiber.Ctx) (interface{}, error) {
 			}
 			
 			infos = append(infos, dto.NftInfo{
-				TokenId:     nft.TokenId,
-				Name:        fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
-				Description: description,
-				CidV0:       nft.CidV0,
-				CidV1:       nft.CidV1,
-				Image:       fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
+				TokenId:       nft.TokenId,
+				Name:          fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
+				Description:   description,
+				CidV0:         nft.CidV0,
+				CidV1:         nft.CidV1,
+				Image:         fmt.Sprintf("/v1/api/nft/image/%d", nft.TokenId),
+				IpfsImageLink: fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
 			})
 		}
 	}
@@ -189,4 +221,33 @@ func (h *NftHandlers) ReadAllNft(c *fiber.Ctx) (interface{}, error) {
 	return &dto.ReadAllNftResponse{
 		Infos: &infos,
 	}, nil
+}
+
+func (h *NftHandlers) ReadNftImage(c *fiber.Ctx) error {
+	strId := c.Params("id")
+	if strId == "" {
+		log.Error("Error reading nft id", "error")
+		return status.Error(codes.Internal, "something went wrong") //nolint
+	}
+	tokenId, err := strconv.ParseInt(strId, 10, 64)
+
+	if err != nil {
+		log.Error("Error parsing nft id", "error", err)
+		return status.Error(codes.Internal, "something went wrong") //nolint
+	}
+
+	ctx := c.Context()
+
+	image, err := h.nftImageRepository.GetByTokenID(ctx, tokenId)
+	if err != nil {
+		log.Error("Error accessing to DB", "error", err)
+		return status.Error(codes.Internal, "something went wrong") //nolint
+	}
+	if image.ID == 0 {
+		log.Error("nft image not found by id", "id", tokenId)
+		return tvoerrors.ErrNotFound
+	}
+
+	c.Set("Content-Type", image.ContentType)
+	return c.Send(image.ImageData)
 }

@@ -32,6 +32,7 @@ export interface NftInfo {
     cid_v0: string;
     cid_v1: string;
     image: string;
+    ipfs_image_link: string;
 }
 
 export interface CreateNftDataRequest {

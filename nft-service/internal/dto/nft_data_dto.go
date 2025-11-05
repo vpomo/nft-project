@@ -20,21 +20,23 @@ type CreateNftDataResponse struct {
 }
 
 type NftInfo struct {
-	TokenId     int64  `json:"token_id" example:"1"`
-	Name        string `json:"name" example:"Sale Google Ads Accounts NFT #1"`
-	Description string `json:"description" example:"About this token"`
-	CidV0       string `json:"cid_v0" example:"dss"`
-	CidV1       string `json:"cid_v1" example:"dss"`
-	Image       string `json:"image" example:"https://dsdsds"`
+	TokenId       int64  `json:"token_id" example:"1"`
+	Name          string `json:"name" example:"Sale Google Ads Accounts NFT #1"`
+	Description   string `json:"description" example:"About this token"`
+	CidV0         string `json:"cid_v0" example:"dss"`
+	CidV1         string `json:"cid_v1" example:"dss"`
+	Image         string `json:"image" example:"https://dsdsds"`
+	IpfsImageLink string `json:"ipfs_image_link" example:"http://bafy...dweb.link/"`
 }
 
 type ReadNftResponse struct {
-	TokenId     int64  `json:"token_id" example:"1"`
-	Name        string `json:"name" example:"Sale Google Ads Accounts NFT #1"`
-	Description string `json:"description" example:"About this token"`
-	CidV0       string `json:"cid_v0" example:"dss"`
-	CidV1       string `json:"cid_v1" example:"dss"`
-	Image       string `json:"image" example:"https://dsdsds"`
+	TokenId       int64  `json:"token_id" example:"1"`
+	Name          string `json:"name" example:"Sale Google Ads Accounts NFT #1"`
+	Description   string `json:"description" example:"About this token"`
+	CidV0         string `json:"cid_v0" example:"dss"`
+	CidV1         string `json:"cid_v1" example:"dss"`
+	Image         string `json:"image" example:"/v1/api/nft/image/1"`
+	IpfsImageLink string `json:"ipfs_image_link" example:"http://bafy...dweb.link/"`
 }
 
 type ReadAllNftResponse struct {
