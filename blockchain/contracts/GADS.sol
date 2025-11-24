@@ -2,7 +2,7 @@
 pragma solidity ^0.8.6;
 
 /**
- * @title SGAA NFT - SALE GOOGLE ADS ACCOUNTS
+ * @title GADS NFT - GOOGLE ADS ACCOUNT STORE
  * @dev ERC-721 contract with token transfer restriction
  * @author Senior Solidity Developer
  */
@@ -39,15 +39,15 @@ interface IERC721Receiver {
 }
 
 /**
- * @title SGAA NFT Contract
+ * @title GADS NFT Contract
  * @notice NFT contract with the ability to lock token transfers
  */
-contract SGAA_NFT is IERC721Metadata {
+contract GADS is IERC721Metadata {
 
     // ========== STATE VARIABLES ========== //
 
-    string private _name = "SALE GOOGLE ADS ACCOUNTS";
-    string private _symbol = "SGAA";
+    string private _name = "GOOGLE ADS ACCOUNT STORE";
+    string private _symbol = "GADS";
 
     address public owner;
     uint256 private _tokenIdCounter;
@@ -78,12 +78,12 @@ contract SGAA_NFT is IERC721Metadata {
     // ========== MODIFIERS ========== //
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "SGAA: caller is not the owner");
+        require(msg.sender == owner, "GADS: caller is not the owner");
         _;
     }
 
     modifier tokenExists(uint256 tokenId) {
-        require(_owners[tokenId] != address(0), "SGAA: token does not exist");
+        require(_owners[tokenId] != address(0), "GADS: token does not exist");
         _;
     }
 
@@ -103,7 +103,7 @@ contract SGAA_NFT is IERC721Metadata {
      * @return tokenId ID of the created token
      */
     function mint(address to) public onlyOwner returns (uint256) {
-        require(to != address(0), "SGAA: mint to zero address");
+        require(to != address(0), "GADS: mint to zero address");
 
         uint256 tokenId = _tokenIdCounter;
         _tokenIdCounter++;
@@ -126,13 +126,13 @@ contract SGAA_NFT is IERC721Metadata {
     onlyOwner
     returns (uint256[] memory tokenIds)
     {
-        require(recipients.length > 0, "SGAA: empty recipients array");
-        require(recipients.length <= 100, "SGAA: batch too large"); // Limit for security
+        require(recipients.length > 0, "GADS: empty recipients array");
+        require(recipients.length <= 100, "GADS: batch too large"); // Limit for security
 
         tokenIds = new uint256[](recipients.length);
 
         for (uint256 i = 0; i < recipients.length; i++) {
-            require(recipients[i] != address(0), "SGAA: mint to zero address");
+            require(recipients[i] != address(0), "GADS: mint to zero address");
 
             uint256 tokenId = _tokenIdCounter;
             _tokenIdCounter++;
@@ -173,12 +173,12 @@ contract SGAA_NFT is IERC721Metadata {
      * @param tokenIds Array of token IDs to be burned
      */
     function burnBatch(uint256[] calldata tokenIds) external onlyOwner {
-        require(tokenIds.length > 0, "SGAA: empty tokenIds array");
-        require(tokenIds.length <= 100, "SGAA: batch too large");
+        require(tokenIds.length > 0, "GADS: empty tokenIds array");
+        require(tokenIds.length <= 100, "GADS: batch too large");
 
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
-            require(_owners[tokenId] != address(0), "SGAA: token does not exist");
+            require(_owners[tokenId] != address(0), "GADS: token does not exist");
 
             address tokenOwner = _owners[tokenId];
 
@@ -229,7 +229,7 @@ contract SGAA_NFT is IERC721Metadata {
      * @param newOwner Address of the new owner
      */
     function transferOwnership(address newOwner) external onlyOwner {
-        require(newOwner != address(0), "SGAA: new owner is zero address");
+        require(newOwner != address(0), "GADS: new owner is zero address");
         address oldOwner = owner;
         owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
@@ -246,7 +246,7 @@ contract SGAA_NFT is IERC721Metadata {
     }
 
     function balanceOf(address ownerAddress) external view override returns (uint256) {
-        require(ownerAddress != address(0), "SGAA: balance query for zero address");
+        require(ownerAddress != address(0), "GADS: balance query for zero address");
         return _balances[ownerAddress];
     }
 
@@ -323,14 +323,14 @@ contract SGAA_NFT is IERC721Metadata {
     {
         require(
             transferable || msg.sender == owner,
-            "SGAA: token transfers are disabled"
+            "GADS: token transfers are disabled"
         );
         require(
             _isApprovedOrOwner(msg.sender, tokenId),
-            "SGAA: transfer caller is not owner nor approved"
+            "GADS: transfer caller is not owner nor approved"
         );
-        require(ownerOf(tokenId) == from, "SGAA: transfer from incorrect owner");
-        require(to != address(0), "SGAA: transfer to zero address");
+        require(ownerOf(tokenId) == from, "GADS: transfer from incorrect owner");
+        require(to != address(0), "GADS: transfer to zero address");
 
         _transfer(from, to, tokenId);
     }
@@ -354,23 +354,23 @@ contract SGAA_NFT is IERC721Metadata {
         transferFrom(from, to, tokenId);
         require(
             _checkOnERC721Received(from, to, tokenId, data),
-            "SGAA: transfer to non ERC721Receiver implementer"
+            "GADS: transfer to non ERC721Receiver implementer"
         );
     }
 
     function approve(address to, uint256 tokenId) external override tokenExists(tokenId) {
         address tokenOwner = ownerOf(tokenId);
-        require(to != tokenOwner, "SGAA: approval to current owner");
+        require(to != tokenOwner, "GADS: approval to current owner");
         require(
             msg.sender == tokenOwner || _operatorApprovals[tokenOwner][msg.sender],
-            "SGAA: approve caller is not owner nor approved for all"
+            "GADS: approve caller is not owner nor approved for all"
         );
 
         _approve(to, tokenId);
     }
 
     function setApprovalForAll(address operator, bool approved) external override {
-        require(operator != msg.sender, "SGAA: approve to caller");
+        require(operator != msg.sender, "GADS: approve to caller");
         _operatorApprovals[msg.sender][operator] = approved;
         emit ApprovalForAll(msg.sender, operator, approved);
     }
@@ -416,7 +416,7 @@ contract SGAA_NFT is IERC721Metadata {
                 return retval == IERC721Receiver.onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("SGAA: transfer to non ERC721Receiver implementer");
+                    revert("GADS: transfer to non ERC721Receiver implementer");
                 } else {
                     assembly {
                         revert(add(32, reason), mload(reason))

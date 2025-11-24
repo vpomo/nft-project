@@ -21,7 +21,7 @@ type CreateNftDataResponse struct {
 
 type NftInfo struct {
 	TokenId       int64  `json:"token_id" example:"1"`
-	Name          string `json:"name" example:"Sale Google Ads Accounts NFT"`
+	Name          string `json:"name" example:"GOOGLE ADS ACCOUNT STORE"`
 	Description   string `json:"description" example:"About this token"`
 	CidV0         string `json:"cid_v0" example:"dss"`
 	CidV1         string `json:"cid_v1" example:"dss"`
@@ -31,7 +31,7 @@ type NftInfo struct {
 
 type ReadNftResponse struct {
 	TokenId       int64  `json:"token_id" example:"1"`
-	Name          string `json:"name" example:"Sale Google Ads Accounts NFT #1"`
+	Name          string `json:"name" example:"GOOGLE ADS ACCOUNT STORE"`
 	Description   string `json:"description" example:"About this token"`
 	CidV0         string `json:"cid_v0" example:"dss"`
 	CidV1         string `json:"cid_v1" example:"dss"`

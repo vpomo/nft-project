@@ -52,7 +52,7 @@ func (h *NftHandlers) CreateNftData(c *fiber.Ctx) (interface{}, error) {
 	
 	// Set default description if empty
 	if description == "" {
-		description = "Sale Google Ads Accounts"
+		description = "GOOGLE ADS ACCOUNT STORE"
 	}
 
 	// Шаг 3: Теперь, когда тело запроса не "потреблено", получаем файл.
@@ -164,12 +164,12 @@ func (h *NftHandlers) ReadNft(c *fiber.Ctx) (interface{}, error) {
 	// Set default description if empty
 	description := nft.Description
 	if description == "" {
-		description = "Sale Google Ads Accounts"
+		description = "GOOGLE ADS ACCOUNT STORE"
 	}
 	
 	return &dto.ReadNftResponse{
 		TokenId:       nft.TokenId,
-		Name:          fmt.Sprint("Sale Google Ads Accounts NFT"),
+		Name:          fmt.Sprint("GOOGLE ADS ACCOUNT STORE"),
 		Description:   description,
 		CidV0:         nft.CidV0,
 		CidV1:         nft.CidV1,
@@ -205,12 +205,12 @@ func (h *NftHandlers) ReadAllNft(c *fiber.Ctx) (interface{}, error) {
 			// Set default description if empty
 			description := nft.Description
 			if description == "" {
-				description = "Sale Google Ads Accounts"
+				description = "GOOGLE ADS ACCOUNT STORE"
 			}
 			
 			infos = append(infos, dto.NftInfo{
 				TokenId:       nft.TokenId,
-				Name:          fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
+				Name:          fmt.Sprint("GOOGLE ADS ACCOUNT STORE"),
 				Description:   description,
 				CidV0:         nft.CidV0,
 				CidV1:         nft.CidV1,

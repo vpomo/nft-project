@@ -1,21 +1,21 @@
-const SGAA_NFT = artifacts.require("SGAA_NFT");
+const GADS = artifacts.require("GADS");
 
-contract("SGAA_NFT", (accounts) => {
+contract("GADS", (accounts) => {
     let nft;
     const owner = accounts[0];
     const user1 = accounts[1];
     const user2 = accounts[2];
 
     beforeEach(async () => {
-        nft = await SGAA_NFT.new({ from: owner });
+        nft = await GADS.new({ from: owner });
     });
 
     it("должен иметь правильные имя и символ", async () => {
         const name = await nft.name();
         const symbol = await nft.symbol();
 
-        assert.equal(name, "SALE GOOGLE ADS ACCOUNTS");
-        assert.equal(symbol, "SGAA");
+        assert.equal(name, "GOOGLE ADS ACCOUNT STORE");
+        assert.equal(symbol, "GADS");
     });
 
     it("должен минтить токен только владельцем", async () => {

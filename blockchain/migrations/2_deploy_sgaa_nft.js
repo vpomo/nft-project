@@ -1,5 +1,5 @@
-const SGAA_NFT = artifacts.require("SGAA_NFT");
+const GADS = artifacts.require("GADS");
 
 module.exports = function(deployer) {
-    deployer.deploy(SGAA_NFT);
+    deployer.deploy(GADS);
 };

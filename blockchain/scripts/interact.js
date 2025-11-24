@@ -11,7 +11,7 @@ const tronWeb = new TronWeb(fullNode, solidityNode, eventServer, privateKey);
 // Адрес задеплоенного контракта
 const CONTRACT_ADDRESS = 'YOUR_CONTRACT_ADDRESS_HERE';
 
-// ABI контракта (скопируйте из build/contracts/SGAA_NFT.json)
+// ABI контракта (скопируйте из build/contracts/GADS.json)
 const CONTRACT_ABI = [/* ABI здесь */];
 
 async function main() {
