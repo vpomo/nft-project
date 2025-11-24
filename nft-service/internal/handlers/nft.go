@@ -16,6 +16,8 @@ import (
 	"main/internal/models"
 )
 
+const publicAPIBaseURL = "http://45.140.147.83:3010"
+
 // NftHandlers
 type NftHandlers struct {
 	logger             *logger.Logger
@@ -96,7 +98,7 @@ func (h *NftHandlers) CreateNftData(c *fiber.Ctx) (interface{}, error) {
 		log.Error("Wrong token id", "error", err)
 		return nil, status.Error(codes.Internal, "wrong token id (is exist)") //nolint
 	}
-	addResponse, cidV1, _, err := service.AddFileToIPFS(file)
+	addResponse, cidV1, _, err := service.AddFileToIPFS(buffer, file.Filename)
 	if err != nil {
 		log.Error("Error creating nft data ", "error", err)
 		return nil, status.Error(codes.Internal, "something went wrong") //nolint
@@ -167,11 +169,11 @@ func (h *NftHandlers) ReadNft(c *fiber.Ctx) (interface{}, error) {
 	
 	return &dto.ReadNftResponse{
 		TokenId:       nft.TokenId,
-		Name:          fmt.Sprintf("Sale Google Ads Accounts NFT #%d", nft.TokenId),
+		Name:          fmt.Sprint("Sale Google Ads Accounts NFT"),
 		Description:   description,
 		CidV0:         nft.CidV0,
 		CidV1:         nft.CidV1,
-		Image:         fmt.Sprintf("/v1/api/nft/image/%d", nft.TokenId),
+		Image:         fmt.Sprintf("%s/v1/api/nft/image/%d", publicAPIBaseURL, nft.TokenId),
 		IpfsImageLink: fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
 	}, nil
 }
@@ -212,7 +214,7 @@ func (h *NftHandlers) ReadAllNft(c *fiber.Ctx) (interface{}, error) {
 				Description:   description,
 				CidV0:         nft.CidV0,
 				CidV1:         nft.CidV1,
-				Image:         fmt.Sprintf("/v1/api/nft/image/%d", nft.TokenId),
+				Image:         fmt.Sprintf("%s/v1/api/nft/image/%d", publicAPIBaseURL, nft.TokenId),
 				IpfsImageLink: fmt.Sprintf(service.KuboGatewayUrlTemplate, nft.CidV1),
 			})
 		}

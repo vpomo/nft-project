@@ -2,15 +2,15 @@ package postgresql
 
 import (
 	"context"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"main/internal/models"
-	"main/tools/pkg/database"
 )
 
 type NftImageRepository struct {
-	db *database.Postgres
+	db *pgxpool.Pool
 }
 
-func NewNftImageRepository(db *database.Postgres) *NftImageRepository {
+func NewNftImageRepository(db *pgxpool.Pool) *NftImageRepository {
 	return &NftImageRepository{
 		db: db,
 	}

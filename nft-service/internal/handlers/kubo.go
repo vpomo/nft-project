@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"main/internal/service"
 	"main/tools/pkg/logger"
+	"io"
 )
 
 // KuboHandlers
@@ -23,34 +24,40 @@ func UploadFileHandler(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Не удалось получить файл из формы",
-			"data":    err.Error(),
+			"error": "Cannot read file from form",
 		})
 	}
 
-	// Вызываем обновленный сервис, который возвращает больше данных
-	addResponse, cidV1, gatewayURL, err := service.AddFileToIPFS(file)
+	// Read file into a buffer
+	openedFile, err := file.Open()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  "error",
-			"message": "Ошибка при добавлении файла в IPFS",
-			"data":    err.Error(),
+			"error": "Cannot open file",
+		})
+	}
+	defer openedFile.Close()
+
+	buffer, err := io.ReadAll(openedFile)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Cannot read file content",
 		})
 	}
 
-	// Формируем расширенный JSON-ответ.
-	// Источник: https://dev.to/hackmamba/robust-media-upload-with-golang-and-cloudinary-fiber-version-2cmf
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"status":  "success",
-		"message": "Файл успешно загружен в IPFS",
-		"data": fiber.Map{
-			"name":       addResponse.Name,
-			"size":       addResponse.Size,
-			"cidV0":      addResponse.Hash,
-			"cidV1":      cidV1,
-			"gatewayUrl": gatewayURL,
-		},
+	addResponse, cidV1, gatewayURL, err := service.AddFileToIPFS(buffer, file.Filename)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message":    "File uploaded successfully to IPFS",
+		"cid_v0":     addResponse.Hash,
+		"cid_v1":     cidV1,
+		"gatewayUrl": gatewayURL,
+		"fileName":   addResponse.Name,
+		"fileSize":   addResponse.Size,
 	})
 }
 

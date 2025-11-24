@@ -10,7 +10,7 @@ export const useNftStore = defineStore('nft', {
         error: null as string | null,
     }),
     actions: {
-        async fetchAllNfts(limit: number = 50) {
+        async fetchAllNfts(limit: number = 50000) {
             this.loading = true;
             this.error = null;
             try {

@@ -23,20 +23,14 @@ func getKuboApiBaseUrl() string {
 }
 
 // AddFileToIPFS загружает файл в узел Kubo и возвращает информацию о нем.
-func AddFileToIPFS(fileHeader *multipart.FileHeader) (*models.AddResponse, string, string, error) {
-	file, err := fileHeader.Open()
-	if err != nil {
-		return nil, "", "", fmt.Errorf("не удалось открыть файл: %w", err)
-	}
-	defer file.Close()
-
+func AddFileToIPFS(fileData []byte, fileName string) (*models.AddResponse, string, string, error) {
 	var requestBody bytes.Buffer
 	writer := multipart.NewWriter(&requestBody)
-	part, err := writer.CreateFormFile("file", fileHeader.Filename)
+	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
 		return nil, "", "", fmt.Errorf("не удалось создать form-file: %w", err)
 	}
-	if _, err := io.Copy(part, file); err != nil {
+	if _, err := io.Copy(part, bytes.NewReader(fileData)); err != nil {
 		return nil, "", "", fmt.Errorf("не удалось скопировать данные файла: %w", err)
 	}
 	writer.Close()
